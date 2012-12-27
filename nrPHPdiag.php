@@ -27,11 +27,14 @@ define("nrDiagFile",     "/tmp/nrPHPdiagFiles.tar.gz");
 
 // return inline CSS
 function nrCSS(){
+	$nrCSS = "";
 	// add some CSS output here
+	return($nrCSS);
 }
 
 // return constructed human-readable timestamp
 function timestamp(){
+	echo "getting date ":
 	$theTime = getdate();
 
 	$timestampNow .= $theTime[weekday]." ";
@@ -41,6 +44,7 @@ function timestamp(){
 	$timestampNow .= $theTime[hours]." : ";
 	$timestampNow .= $theTime[minutes]." : ";
 	$timestampNow .= $theTime[seconds]." : ";
+	echo "returning date ";
 
 	return($timestampNow);
 }
@@ -48,6 +52,7 @@ function timestamp(){
 // zero log file and write header
 // exit script if unable to write to logfile
 function nrInitLog()){
+	echo "initializing log ";
 	if(not is_dir(nrLogFile)){
 		$nrLogFileHandle = fopen (nrLogFile, "w");
 
@@ -58,6 +63,7 @@ function nrInitLog()){
 		fwrite($nrLogFileHandle,$initMessage);
 
 		fclose($nrLogFileHandle);
+		echo "log initialized ";
 	}
 	else { exit("Unable to open log file at " . nrLogFile ."\n" ); }
 }
@@ -65,6 +71,7 @@ function nrInitLog()){
 // output data both to webpage & logfile
 // handle HTML tags
 function nrOut(tag,msg){
+	echo "nrOut ";
 	$nrLogFileHandle = fopen (nrLogFile, "a");
 	fwrite(nrLogFileHandle, msg . "\n");
 	fclose($nrLogFileHandle);
@@ -78,19 +85,20 @@ function nrOut(tag,msg){
 		$closeTag = "";
 	}
 
-	echo $openTag . msg . $closeTag . "\n" ;
+	printf $openTag . msg . $closeTag . "\n" ;
 }
 
+echo "getting to dispatcher "
 
 if(empty($_GET)){
-	echo("<html>\n");
-	echo(nrCSS());
-	echo("<body>\n");
+	printf("<html>\n");
+	printf(nrCSS());
+	printf("<body>\n");
 
-	echo("<h1>New Relic PHP Agent Diagnostic Tool</h1>");
-	echo("<br />");
+	printf("<h1>New Relic PHP Agent Diagnostic Tool</h1>");
+	printf("<br />");
 	nrOut("h2","Basic System Info");
-	echo("<ul>");
+	printf("<ul>");
 
 		nrOut("li","System : " . `uname -a`);
 		nrOut("li","Hostname : " . gethostname());
@@ -99,7 +107,7 @@ if(empty($_GET)){
 		nrOut("li","Name : " . $_SERVER[SERVER_NAME]);
 		nrOut("li","Root : " . $_SERVER[DOCUMENT_ROOT]);
 
-	echo("</ul>");
+	printf("</ul>");
 
 	if (extension_loaded('newrelic')) { 
 		nrOut("","Extension is Loaded");
@@ -122,7 +130,8 @@ if(empty($_GET)){
 		nrOut("strong","Extension NOT Loaded");
 	}
 
-	echo("</body></html>");
+	printf("</body></html>");
 }
+else{printf($_GET);}
 
 ?>
