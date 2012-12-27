@@ -84,7 +84,7 @@ if(nrDebug) echo "nrOut";
 function nrOut($tag,$msg){
 	if(nrDebug) echo "nrOut ";
 	$nrLogFileHandle = fopen (nrLogFile, "a");
-	fwrite(nrLogFileHandle, $msg . "\n");
+	fwrite($nrLogFileHandle, $msg . "\n");
 	fclose($nrLogFileHandle);
 
 	if(! empty($tag)){
@@ -100,6 +100,8 @@ function nrOut($tag,$msg){
 }
 
 if(nrDebug) echo "getting to dispatcher ";
+
+nrInitLog();
 
 if(empty($_GET)){
 	printf("<html>\n");
