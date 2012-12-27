@@ -19,11 +19,16 @@
 
 // CONSTANTS
 
-define("nrPHPdiagVer",	"0.1")
+define("nrDebug",		FALSE);
+define("nrPHPdiagVer",	"0.1");
 define("nrLogFile",     "/tmp/nrPHPdiag.log");
 define("nrDiagFile",     "/tmp/nrPHPdiagFiles.tar.gz");
 
 // FUNCTIONS
+
+if(nrDebug) echo "creating functions ";
+
+if(nrDebug) echo "nrCSS";
 
 // return inline CSS
 function nrCSS(){
@@ -32,9 +37,11 @@ function nrCSS(){
 	return($nrCSS);
 }
 
+if(nrDebug) echo "timestamp ";
+
 // return constructed human-readable timestamp
 function timestamp(){
-	echo "getting date ":
+	if(nrDebug) echo "getting date ";
 	$theTime = getdate();
 
 	$timestampNow .= $theTime[weekday]." ";
@@ -44,16 +51,17 @@ function timestamp(){
 	$timestampNow .= $theTime[hours]." : ";
 	$timestampNow .= $theTime[minutes]." : ";
 	$timestampNow .= $theTime[seconds]." : ";
-	echo "returning date ";
+	if(nrDebug) echo "returning date ";
 
 	return($timestampNow);
 }
 
+if(nrDebug) echo "nrInitLog ";
 // zero log file and write header
 // exit script if unable to write to logfile
-function nrInitLog()){
-	echo "initializing log ";
-	if(not is_dir(nrLogFile)){
+function nrInitLog(){
+	if(nrDebug) echo "initializing log ";
+	if(! is_dir(nrLogFile)){
 		$nrLogFileHandle = fopen (nrLogFile, "w");
 
 		$initMessage = "***************************************************************************\"n";
@@ -61,34 +69,36 @@ function nrInitLog()){
 		$initMessage .= "Start Time:" . timestamp() . "\n\n";
 
 		fwrite($nrLogFileHandle,$initMessage);
+		if(nrDebug) printf($initMessage);
 
 		fclose($nrLogFileHandle);
-		echo "log initialized ";
+		if(nrDebug) echo "log initialized ";
 	}
 	else { exit("Unable to open log file at " . nrLogFile ."\n" ); }
 }
 
+if(nrDebug) echo "nrOut";
 // output data both to webpage & logfile
 // handle HTML tags
-function nrOut(tag,msg){
-	echo "nrOut ";
+function nrOut($tag,$msg){
+	if(nrDebug) echo "nrOut ";
 	$nrLogFileHandle = fopen (nrLogFile, "a");
-	fwrite(nrLogFileHandle, msg . "\n");
+	fwrite(nrLogFileHandle, $msg . "\n");
 	fclose($nrLogFileHandle);
 
-	if(! empty(tag)){
-		$openTag = "<" . tag . ">";
-		$closeTag = "</" . tag . ">";
+	if(! empty($tag)){
+		$openTag = "<" . $tag . ">";
+		$closeTag = "</" . $tag . ">";
 	}
 	else{
 		$openTag = "";
 		$closeTag = "";
 	}
 
-	printf $openTag . msg . $closeTag . "\n" ;
+	printf($openTag . $msg . $closeTag . "\n") ;
 }
 
-echo "getting to dispatcher "
+if(nrDebug) echo "getting to dispatcher ";
 
 if(empty($_GET)){
 	printf("<html>\n");
@@ -110,11 +120,11 @@ if(empty($_GET)){
 	printf("</ul>");
 
 	if (extension_loaded('newrelic')) { 
-		nrOut("","Extension is Loaded");
-		nrOut("","New Relic App Name: ".newrelic.appname);
-		nrOut("","New Relic License Key: ".newrelic.license);
-		$daemon_running = shell_exec("ps -ef | grep newrelic-daemon | grep -v grep ")
-		if empty($daemon_running){
+		nrOut("p","Extension is Loaded");
+		nrOut("p","New Relic App Name: ". ini_get('newrelic.appname'));
+		nrOut("p","New Relic License Key: ". ini_get('newrelic.license'));
+		$daemon_running = shell_exec("ps -ef | grep newrelic-daemon | grep -v grep ");
+		if(empty($daemon_running)){
 			nrOut("strong","Daemon IS NOT Running");
 			// check for newrelic.cfg
 			// check for /var/log/newrelic/newrelic-daemon.log
