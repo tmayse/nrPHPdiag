@@ -17,12 +17,19 @@
 //
 // ***************************************************************************
 
+// record all metrics as "New Relic PHP Diagnostic"
+newrelic.set_appname("New Relic PHP Diagnostic")
+
 // CONSTANTS
 
-define("nrDebug",		TRUE);
-define("nrPHPdiagVer",	"0.1");
-define("nrLogFile",     "/tmp/nrPHPdiag.log");
-define("nrDiagFile",     "/tmp/nrPHPdiagFiles.tar.gz");
+define("nrDebug",				FALSE);
+define("nrDaemonPort",			33142);
+define("nrDaemonConfigFile",	"/etc/newrelic/newrelic.cfg");
+define("nrDaemonLogFile",		"/var/log/newrelic/newrelic-daemon.log");
+define("nrAgentLogFile",		"/var/log/newrelic/php_agent.log");
+define("nrPHPdiagVer",			"0.2");
+define("nrLogFile",     		"/tmp/nrPHPdiag.log");
+define("nrDiagFile",     		"/tmp/nrPHPdiagFiles.tar.gz");
 
 // FUNCTIONS
 
@@ -37,6 +44,13 @@ function nrCSS(){
 	return($nrCSS);
 }
 
+// exercise application
+function exercise($delay){
+	usleep($delay);
+	// add random errors and external connections
+	return();
+}
+
 if(nrDebug) echo "timestamp ";
 
 // return constructed human-readable timestamp
@@ -48,9 +62,9 @@ function timestamp(){
 	$timestampNow .= $theTime[month]." ";
 	$timestampNow .= $theTime[mday].", ";
 	$timestampNow .= $theTime[year]." - ";
-	$timestampNow .= $theTime[hours]." : ";
-	$timestampNow .= $theTime[minutes]." : ";
-	$timestampNow .= $theTime[seconds]." : ";
+	$timestampNow .= $theTime[hours].":";
+	$timestampNow .= $theTime[minutes].":";
+	$timestampNow .= $theTime[seconds];
 	if(nrDebug) echo "returning date ";
 
 	return($timestampNow);
@@ -65,8 +79,8 @@ function nrInitLog(){
 		$nrLogFileHandle = fopen(nrLogFile, "w");
 
 		$initMessage = "***************************************************************************\n";
-		$initMessage .= "Version: " . nrPHPdiagVer . "\n" ;
-		$initMessage .= "Start Time:" . timestamp() . "\n\n";
+		$initMessage .= "Version : " . nrPHPdiagVer . "\n" ;
+		$initMessage .= "Start Time : " . timestamp() . " GMT\n\n";
 
 
 		fwrite($nrLogFileHandle,$initMessage);
@@ -136,6 +150,7 @@ if(empty($_GET)){
 		else{
 			nrOut("","Daemon is Running");
 			nrOut("pre",$daemon_running);
+			//check connection to 127.0.0.1 port nrDaemonPort || ini_get("newrelic.daemon.port")
 		}
 		// create a diag application and generate metrics
 	}
@@ -145,6 +160,11 @@ if(empty($_GET)){
 
 	printf("</body></html>");
 }
-else{printf($_GET);}
+elseif(in_array( "exercise", array_keys($_GET){
+	excercise($_GET["excercise"]);
+}
+elseif(in_array( "logo", array_keys($_GET){
+	//output logo file
+}
 
 ?>
