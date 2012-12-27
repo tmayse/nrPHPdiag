@@ -19,7 +19,7 @@
 
 // CONSTANTS
 
-define("nrDebug",		FALSE);
+define("nrDebug",		TRUE);
 define("nrPHPdiagVer",	"0.1");
 define("nrLogFile",     "/tmp/nrPHPdiag.log");
 define("nrDiagFile",     "/tmp/nrPHPdiagFiles.tar.gz");
@@ -61,15 +61,16 @@ if(nrDebug) echo "nrInitLog ";
 // exit script if unable to write to logfile
 function nrInitLog(){
 	if(nrDebug) echo "initializing log ";
-	if(! is_dir(nrLogFile)){
-		$nrLogFileHandle = fopen (nrLogFile, "w");
+	if(is_writable(nrLogFile) && ! is_dir(nrLogFile)){
+		$nrLogFileHandle = fopen(nrLogFile, "w");
 
-		$initMessage = "***************************************************************************\"n";
+		$initMessage = "***************************************************************************\n";
 		$initMessage .= "Version: " . nrPHPdiagVer . "\n" ;
 		$initMessage .= "Start Time:" . timestamp() . "\n\n";
 
+
 		fwrite($nrLogFileHandle,$initMessage);
-		if(nrDebug) printf($initMessage);
+		if(nrDebug) printf("Log Init Message : " . $initMessage);
 
 		fclose($nrLogFileHandle);
 		if(nrDebug) echo "log initialized ";
