@@ -170,9 +170,9 @@ if(empty($_GET)){ // was the script called without any parameters? if so, this i
 
 	if (extension_loaded('newrelic')) { 
 		$nrAppName = nrInitialAppName;
-		if (get_cfg_var('newrelic.appname') != $nrAppName) {$nrAppName .= ' was changed from ' .  get_cfg_var('newrelic.appname') }
+		if (get_cfg_var('newrelic.appname') != $nrAppName) {$nrAppName .= ' was changed from ' .  get_cfg_var('newrelic.appname'); }
 		$nrLicenseKey = ini_get('newrelic.license');
-	if (get_cfg_var('newrelic.license') != $nrLicenseKey) {$nrLicenseKey .= ' was changed from ' .  get_cfg_var('newrelic.license') }
+	if (get_cfg_var('newrelic.license') != $nrLicenseKey) {$nrLicenseKey .= ' was changed from ' .  get_cfg_var('newrelic.license'); }
 		nrOut("p","Extension is Loaded");
 		nrOut("p","New Relic App Name: " . $nrAppName);
 		nrOut("p","New Relic Full License Key: " . $nrLicenseKey);
