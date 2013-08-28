@@ -23,7 +23,7 @@ $nrMessages = "";
 $nrIntiialAppName = ini_get('newrelic.appname'); // saving it since it's about to change
 
 // record all metrics as "New Relic PHP Diagnostic"
-newrelic.set_appname("New Relic PHP Diagnostic");
+newrelic_set_appname("New Relic PHP Diagnostic");
 
 // CONSTANTS
 
@@ -86,9 +86,12 @@ if(nrDebug) echo "nrInitLog ";
 function nrInitLog(){
 	global $nrResult;
 	if(nrDebug) echo "initializing log ";
-	if (!mkdir(nrPHPdiagDir, 0, true)) {
-    	echo('Failed to create '.nrPHPdiagDir);
-    	exit(126);}
+	if is_dir(nrPHPdiagDir) {
+		if (!mkdir(nrPHPdiagDir, 0, true)) {
+    		echo('Failed to create '.nrPHPdiagDir);
+    		exit(126);
+    	}
+    }
 	if(is_writable(nrLogFile) && ! is_dir(nrLogFile)){
 		$nrLogFileHandle = fopen(nrLogFile, "w");
 
@@ -186,12 +189,12 @@ if(empty($_GET)){ // was the script called without any parameters? if so, this i
 			nrOut("strong","Daemon IS NOT Running");
 			// check newrelic-daemon file permissions
 			if(file_exists(nrDaemonConfigFile)){
-				nrOut("p","Try starting your newrelic-daemon with /etc/init.d/newrelic-daemon start and then rerun the diagnostic.")
+				nrOut("p","Try starting your newrelic-daemon with /etc/init.d/newrelic-daemon start and then rerun the diagnostic.");
 				nrOut("p","If you try staring the daemon and get the same results, email support@newrelic.com and include the ouput from /etc/init.d/newrelic-daemon start along with the logfile /etc/var/log/newrelic-daemon.log");
 				// external startup - /etc/init.d/newrelic-daemon start
 			}
 			else{
-				nrOut("p","Try restarting your web server or PHP dispatcher (FPM,Apache,nginx etc) and then rerun the diagnostic.")
+				nrOut("p","Try restarting your web server or PHP dispatcher (FPM,Apache,nginx etc) and then rerun the diagnostic.");
 				nrOut("p","If you get the same results, email support@newrelic.com and include any relevant web server logs from startup along with the logfile /etc/var/log/newrelic-daemon.log");
 				// agent init - restart web server
 			}
@@ -264,10 +267,10 @@ if(empty($_GET)){ // was the script called without any parameters? if so, this i
 
 	printf("</body></html>");
 }
-elseif(in_array( "exercise", array_keys($_GET){
+elseif(in_array( "exercise", array_keys($_GET))){
 	excercise($_GET["excercise"]);
 }
-elseif(in_array( "logo", array_keys($_GET){
+elseif(in_array( "logo", array_keys($_GET))){
 	//output logo file
 }
 
