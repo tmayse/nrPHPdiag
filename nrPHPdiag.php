@@ -20,7 +20,7 @@
 // GLOBAL VARIABLES (so shoot me)
 $nrResult = "";
 $nrMessages = "";
-$nrIntiialAppName = ini_get('newrelic.appname'); // saving it since it's about to change
+$nrInitialAppName = ini_get('newrelic.appname'); // saving it since it's about to change
 
 // record all metrics as "New Relic PHP Diagnostic"
 newrelic_set_appname("New Relic PHP Diagnostic");
@@ -163,22 +163,18 @@ if(empty($_GET)){ // was the script called without any parameters? if so, this i
 
 		nrOut("li","System : " . php_uname('a')); // kernel
 		nrOut("li","Hostname : " . gethostname()); // hostname
+		nrOut("li","Document Root : " . $_SERVER[DOCUMENT_ROOT]); // PHP document root
 		nrOut("li","Self : " . $_SERVER[PHP_SELF]); // script file
 		nrOut("li","Address : " . $_SERVER[SERVER_ADDR]); // IP address connected to
 		nrOut("li","Name : " . $_SERVER[SERVER_NAME]); // hostname from URL 
-		nrOut("li","Document Root : " . $_SERVER[DOCUMENT_ROOT]); // PHP document root
 		nrOut("li","Server Root : " . $_SERVER[SERVER_ROOT]); // PHP document root
 
 	printf("</ul>");
 
 	if (extension_loaded('newrelic')) { 
-		$nrAppName = nrInitialAppName;
-		if (get_cfg_var('newrelic.appname') != $nrAppName) {$nrAppName .= ' was changed from ' .  get_cfg_var('newrelic.appname'); }
-		$nrLicenseKey = ini_get('newrelic.license');
-	if (get_cfg_var('newrelic.license') != $nrLicenseKey) {$nrLicenseKey .= ' was changed from ' .  get_cfg_var('newrelic.license'); }
 		nrOut("p","Extension is Loaded");
-		nrOut("p","New Relic App Name: " . $nrAppName);
-		nrOut("p","New Relic Full License Key: " . $nrLicenseKey);
+		nrOut("p","New Relic App Name: " . $nrInitialAppName);
+		nrOut("p","New Relic Full License Key: " . ini_get('newrelic.license');
 		nrOut("p","Loaded Config File: " . get_cfg_var('cfg_file_path'));
 		nrOut("p","Root config file: " . get_env('PHP_INI_SCAN_DIR'));
 		nrOut("p","Scanned ini files: " . php_ini_scanned_files());
