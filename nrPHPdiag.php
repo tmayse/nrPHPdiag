@@ -86,14 +86,14 @@ if(nrDebug) echo "nrInitLog ";
 function nrInitLog(){
 	global $nrResult;
 	if(nrDebug) echo "initializing log ";
-	if (is_dir(nrPHPdiagDir)) {
-		if (!mkdir(nrPHPdiagDir, 777, false)) {
+	if (!is_dir(nrPHPdiagDir)) {
+		if (!mkdir(nrPHPdiagDir)) {
     		echo('Failed to create '.nrPHPdiagDir);
     		exit(126);
     	}
     }
-	if(is_writable(nrLogFile) && ! is_dir(nrLogFile)){
-		$nrLogFileHandle = fopen(nrLogFile, "w");
+    $nrLogFileHandle = fopen(nrLogFile, "w");
+	if($nrLogFileHandle != FALSE){
 
 		$initMessage = "***************************************************************************\n";
 		$initMessage .= "Version : " . nrPHPdiagVer . "\n" ;
