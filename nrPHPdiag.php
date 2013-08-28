@@ -2,7 +2,7 @@
 
 // ******************************** New Relic ********************************
 //
-// PHP Agent Diagnostic Tool v 0.1
+// PHP Agent Diagnostic Tool v 0.3
 // Author: Tony Mayse 
 //
 // ***************************************************************************
@@ -20,7 +20,7 @@
 // GLOBAL VARIABLES (so shoot me)
 $nrResult = "";
 $nrMessages = "";
-$nrENVAppName = getenv('newrelic.appname'); // saving it since it's about to change
+$nrENVAppName = ini_get('newrelic.appname'); // saving it since it's about to change
 
 // record all metrics as "New Relic PHP Diagnostic"
 newrelic.set_appname("New Relic PHP Diagnostic");
@@ -32,9 +32,10 @@ define("nrDaemonPort",				33142);
 define("nrDaemonConfigFile",		"/etc/newrelic/newrelic.cfg");
 define("nrDaemonLogFileDefault",	"/var/log/newrelic/newrelic-daemon.log");
 define("nrAgentLogFile",			"/var/log/newrelic/php_agent.log");
-define("nrPHPdiagVer",				"0.2");
-define("nrLogFile",     			"/tmp/nrPHPdiag.log");
-define("nrDiagFile",     			"/tmp/nrPHPdiagFiles.tar.gz");
+define("nrPHPdiagVer",				"0.3");
+define("nrPHPdiagDir"),				"/tmp/nrPHPdiag/");
+define("nrLogFile",     			nrPHPdiagDir."nrPHPdiag.log");
+define("nrDiagFile",     			nrPHPdiagDir."nrPHPdiagFiles.tar.gz");
 
 // FUNCTIONS
 
@@ -50,7 +51,7 @@ function nrCSS(){
 }
 
 // exercise application
-// this is in a fucntion so New Relic
+// this is in a function so New Relic
 // will trace it automatically
 function exercise($delay){
 	usleep($delay);
@@ -85,6 +86,9 @@ if(nrDebug) echo "nrInitLog ";
 function nrInitLog(){
 	global $nrResult;
 	if(nrDebug) echo "initializing log ";
+	if (!mkdir(nrPHPdiagDir, 0, true)) {
+    	echo('Failed to create '.nrPHPdiagDir);
+    	exit(126);}
 	if(is_writable(nrLogFile) && ! is_dir(nrLogFile)){
 		$nrLogFileHandle = fopen(nrLogFile, "w");
 
@@ -100,7 +104,7 @@ function nrInitLog(){
 		fclose($nrLogFileHandle);
 		if(nrDebug) echo "log initialized ";
 	}
-	else { exit("Unable to open log file at " . nrLogFile ."\n" ); }
+	else { echo("Unable to open log file at " . nrLogFile ."\n" ); exit(126)}
 }
 
 if(nrDebug) echo "nrOut";
