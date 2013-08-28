@@ -33,7 +33,7 @@ define("nrDefaultDaemonConfigFile",		"/etc/newrelic/newrelic.cfg");
 define("nrDefaultDaemonLogFileDefault",	"/var/log/newrelic/newrelic-daemon.log");
 define("nrDefaultAgentLogFile",			"/var/log/newrelic/php_agent.log");
 define("nrPHPdiagVer",					"0.3.1");
-define("nrPHPdiagDir"),					"/tmp/nrPHPdiag/");
+define("nrPHPdiagDir",					"/tmp/nrPHPdiag/");
 define("nrLogFile",     				nrPHPdiagDir."nrPHPdiag.log");
 define("nrDiagFile",     				nrPHPdiagDir."nrPHPdiagFiles.tar.gz");
 
@@ -56,7 +56,7 @@ function nrCSS(){
 function exercise($delay){
 	usleep($delay);
 	// add random errors and external connections
-	return();
+	return;
 }
 
 if(nrDebug) echo "timestamp ";
@@ -104,7 +104,7 @@ function nrInitLog(){
 		fclose($nrLogFileHandle);
 		if(nrDebug) echo "log initialized ";
 	}
-	else { echo("Unable to open log file at " . nrLogFile ."\n" ); exit(126)}
+	else { echo("Unable to open log file at " . nrLogFile ."\n" ); exit(126);}
 }
 
 if(nrDebug) echo "nrOut";
@@ -169,13 +169,13 @@ if(empty($_GET)){ // was the script called without any parameters? if so, this i
 	printf("</ul>");
 
 	if (extension_loaded('newrelic')) { 
-		nrAppName = nrIntiialAppName;
-		if (get_cfg_var('newrelic.appname') != nrAppName) {nrAppName .= ' was changed from ' .  get_cfg_var('newrelic.appname') }
-		nrLicenseKey = ini_get('newrelic.license');
-	if (get_cfg_var('newrelic.license') != nrLicenseKey) {nrLicenseKey .= ' was changed from ' .  get_cfg_var('newrelic.license') }
+		$nrAppName = nrInitialAppName;
+		if (get_cfg_var('newrelic.appname') != $nrAppName) {$nrAppName .= ' was changed from ' .  get_cfg_var('newrelic.appname') }
+		$nrLicenseKey = ini_get('newrelic.license');
+	if (get_cfg_var('newrelic.license') != $nrLicenseKey) {$nrLicenseKey .= ' was changed from ' .  get_cfg_var('newrelic.license') }
 		nrOut("p","Extension is Loaded");
-		nrOut("p","New Relic App Name: " . nrAppName);
-		nrOut("p","New Relic Full License Key: " . nrLicenseKey);
+		nrOut("p","New Relic App Name: " . $nrAppName);
+		nrOut("p","New Relic Full License Key: " . $nrLicenseKey);
 		nrOut("p","Loaded Config File: " . get_cfg_var('cfg_file_path'));
 		nrOut("p","Root config file: " . get_env('PHP_INI_SCAN_DIR'));
 		nrOut("p","Scanned ini files: " . php_ini_scanned_files());
