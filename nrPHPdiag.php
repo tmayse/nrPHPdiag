@@ -174,9 +174,9 @@ if(empty($_GET)){ // was the script called without any parameters? if so, this i
 	if (extension_loaded('newrelic')) { 
 		nrOut("p","Extension is Loaded");
 		nrOut("p","New Relic App Name: " . $nrInitialAppName);
-		nrOut("p","New Relic Full License Key: " . ini_get('newrelic.license');
+		nrOut("p","New Relic Full License Key: " . ini_get('newrelic.license'));
 		nrOut("p","Loaded Config File: " . get_cfg_var('cfg_file_path'));
-		nrOut("p","Root config file: " . get_env('PHP_INI_SCAN_DIR'));
+		nrOut("p","Root config file: " . getenv('PHP_INI_SCAN_DIR'));
 		nrOut("p","Scanned ini files: " . php_ini_scanned_files());
 
 
