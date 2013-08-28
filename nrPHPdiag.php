@@ -2,7 +2,7 @@
 
 // ******************************** New Relic ********************************
 //
-// PHP Agent Diagnostic Tool v 0.3
+// PHP Agent Diagnostic Tool v 0.3.1
 // Author: Tony Mayse 
 //
 // ***************************************************************************
@@ -20,22 +20,22 @@
 // GLOBAL VARIABLES (so shoot me)
 $nrResult = "";
 $nrMessages = "";
-$nrENVAppName = ini_get('newrelic.appname'); // saving it since it's about to change
+$nrIntiialAppName = ini_get('newrelic.appname'); // saving it since it's about to change
 
 // record all metrics as "New Relic PHP Diagnostic"
 newrelic.set_appname("New Relic PHP Diagnostic");
 
 // CONSTANTS
 
-define("nrDebug",					FALSE);
-define("nrDaemonPort",				33142);
-define("nrDaemonConfigFile",		"/etc/newrelic/newrelic.cfg");
-define("nrDaemonLogFileDefault",	"/var/log/newrelic/newrelic-daemon.log");
-define("nrAgentLogFile",			"/var/log/newrelic/php_agent.log");
-define("nrPHPdiagVer",				"0.3");
-define("nrPHPdiagDir"),				"/tmp/nrPHPdiag/");
-define("nrLogFile",     			nrPHPdiagDir."nrPHPdiag.log");
-define("nrDiagFile",     			nrPHPdiagDir."nrPHPdiagFiles.tar.gz");
+define("nrDebug",						FALSE);
+define("nrDefaultDaemonPort",			33142);
+define("nrDefaultDaemonConfigFile",		"/etc/newrelic/newrelic.cfg");
+define("nrDefaultDaemonLogFileDefault",	"/var/log/newrelic/newrelic-daemon.log");
+define("nrDefaultAgentLogFile",			"/var/log/newrelic/php_agent.log");
+define("nrPHPdiagVer",					"0.3.1");
+define("nrPHPdiagDir"),					"/tmp/nrPHPdiag/");
+define("nrLogFile",     				nrPHPdiagDir."nrPHPdiag.log");
+define("nrDiagFile",     				nrPHPdiagDir."nrPHPdiagFiles.tar.gz");
 
 // FUNCTIONS
 
@@ -64,7 +64,7 @@ if(nrDebug) echo "timestamp ";
 // return constructed human-readable timestamp
 function timestamp(){
 	if(nrDebug) echo "getting date ";
-	$theTime = getdate();
+	$theTime = getdate(); // need to update to ensure GMT
 
 	$timestampNow .= $theTime[weekday]." ";
 	$timestampNow .= $theTime[month]." ";
@@ -132,10 +132,11 @@ function nrOut($tag,$msg){
 	printf($openTag . $msg . $closeTag . "\n") ;
 }
 
-// I would like to create nrPHPValue which gets the value from ini_get and getenv
-// the goes on its merry way if they match and does something different if they don't
+// I would like to create nrPHPValue which gets the value from ini_get and get_cfg_var
+// then goes on its merry way if they match and does something different if they don't
 
 if(nrDebug) echo "getting to dispatcher ";
+
 
 // ***************************************************************************
 //
@@ -157,23 +158,28 @@ if(empty($_GET)){ // was the script called without any parameters? if so, this i
 	nrOut("h2","Basic System Info");
 	printf("<ul>");
 
-		nrOut("li","System : " . `uname -a`); // kernel
+		nrOut("li","System : " . php_uname('a')); // kernel
 		nrOut("li","Hostname : " . gethostname()); // hostname
 		nrOut("li","Self : " . $_SERVER[PHP_SELF]); // script file
 		nrOut("li","Address : " . $_SERVER[SERVER_ADDR]); // IP address connected to
 		nrOut("li","Name : " . $_SERVER[SERVER_NAME]); // hostname from URL 
-		nrOut("li","Root : " . $_SERVER[DOCUMENT_ROOT]); // PHP document root
+		nrOut("li","Document Root : " . $_SERVER[DOCUMENT_ROOT]); // PHP document root
+		nrOut("li","Server Root : " . $_SERVER[SERVER_ROOT]); // PHP document root
 
 	printf("</ul>");
 
 	if (extension_loaded('newrelic')) { 
+		nrAppName = nrIntiialAppName;
+		if (get_cfg_var('newrelic.appname') != nrAppName) {nrAppName .= ' was changed from ' .  get_cfg_var('newrelic.appname') }
+		nrLicenseKey = ini_get('newrelic.license');
+	if (get_cfg_var('newrelic.license') != nrLicenseKey) {nrLicenseKey .= ' was changed from ' .  get_cfg_var('newrelic.license') }
 		nrOut("p","Extension is Loaded");
-		nrOut("p","New Relic ini App Name: ". ini_get('newrelic.appname'));
-		nrOut("p","New Relic ENV Now App Name: ". getenv('newrelic.appname'));
-		nrOut("p","New Relic ENV Before App Name: ". $nrENVAppName);
-		nrOut("p","New Relic ini License Key: ". ini_get('newrelic.license'));
-		nrOut("p","New Relic ini License Key: ". getenv('newrelic.license'));
-		// NOTE: need to create smarter output in the future 
+		nrOut("p","New Relic App Name: " . nrAppName);
+		nrOut("p","New Relic Full License Key: " . nrLicenseKey);
+		nrOut("p","Loaded Config File: " . get_cfg_var('cfg_file_path'));
+		nrOut("p","Root config file: " . get_env('PHP_INI_SCAN_DIR'));
+		nrOut("p","Scanned ini files: " . php_ini_scanned_files());
+
 
 		$daemon_running = shell_exec("ps -ef | grep newrelic-daemon | grep -v grep ");
 		if(empty($daemon_running)){
