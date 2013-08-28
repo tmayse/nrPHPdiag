@@ -86,8 +86,8 @@ if(nrDebug) echo "nrInitLog ";
 function nrInitLog(){
 	global $nrResult;
 	if(nrDebug) echo "initializing log ";
-	if is_dir(nrPHPdiagDir) {
-		if (!mkdir(nrPHPdiagDir, 0, true)) {
+	if (is_dir(nrPHPdiagDir)) {
+		if (!mkdir(nrPHPdiagDir, 777, false)) {
     		echo('Failed to create '.nrPHPdiagDir);
     		exit(126);
     	}
