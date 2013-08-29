@@ -2,7 +2,7 @@
 
 // ******************************** New Relic ********************************
 //
-// PHP Agent Diagnostic Tool v 0.3.1
+// PHP Agent Diagnostic Tool v 0.3.2
 // Author: Tony Mayse 
 //
 // ***************************************************************************
@@ -32,7 +32,7 @@ define("nrDefaultDaemonPort",			33142);
 define("nrDefaultDaemonConfigFile",		"/etc/newrelic/newrelic.cfg");
 define("nrDefaultDaemonLogFileDefault",	"/var/log/newrelic/newrelic-daemon.log");
 define("nrDefaultAgentLogFile",			"/var/log/newrelic/php_agent.log");
-define("nrPHPdiagVer",					"0.3.1");
+define("nrPHPdiagVer",					"0.3.2");
 define("nrPHPdiagDir",					"/tmp/nrPHPdiag/");
 define("nrLogFile",     				nrPHPdiagDir."nrPHPdiag.log");
 define("nrDiagFile",     				nrPHPdiagDir."nrPHPdiagFiles.tar.gz");
@@ -137,6 +137,7 @@ function nrOut($tag,$msg){
 
 // I would like to create nrPHPValue which gets the value from ini_get and get_cfg_var
 // then goes on its merry way if they match and does something different if they don't
+// perhaps this isn't necessary or possible?
 
 if(nrDebug) echo "getting to dispatcher ";
 
@@ -153,7 +154,7 @@ nrInitLog();
 
 if(empty($_GET)){ // was the script called without any parameters? if so, this is the main function
 	printf("<html>\n");
-	printf(nrCSS());
+	printf(nrCSS()); // use SASS to generate CSS with Data URI encoded logo image
 	printf("<body>\n");
 
 	printf("<h1>New Relic PHP Agent Diagnostic Tool</h1>");
@@ -245,12 +246,13 @@ if(empty($_GET)){ // was the script called without any parameters? if so, this i
 			fclose($nrDaemonSocket);
 		}
 		else{
-			nrOut("","Daemon is Running");
+			nrOut("","Daemon is Running"); // is this being evaluated? I didn't see the output in testing.
 			nrOut("pre",$daemon_running);
 
 			// do the versions match?
 		}
 		// create a diag application and generate metrics
+		// maybe create a deployment with some critical info in the change log?
 	}
 	else {
 		nrOut("strong","Extension NOT Loaded");
@@ -266,8 +268,6 @@ if(empty($_GET)){ // was the script called without any parameters? if so, this i
 elseif(in_array( "exercise", array_keys($_GET))){
 	excercise($_GET["excercise"]);
 }
-elseif(in_array( "logo", array_keys($_GET))){
-	//output logo file
-}
+
 
 ?>
